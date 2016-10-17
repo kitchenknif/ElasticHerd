@@ -1,3 +1,7 @@
+# ElasticHerd Config file
+elastic_config.cfg
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -87,3 +91,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# idea
+.idea
