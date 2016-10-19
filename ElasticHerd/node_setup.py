@@ -1,19 +1,18 @@
 import paramiko
 
+
 def print_stdout(stdout):
     for l in stdout.readlines():
         print(l)
 
-def install_mpi_ecosystem_keyfile(hostname, user, keyfile):
-    rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
-    install_mpi_ecosystem(hostname, user, rsa_key)
 
-def install_mpi_ecosystem(hostname, user, rsa_key):
+def install_apt_packages(hostname, user, keyfile, package_list):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(
                                     paramiko.AutoAddPolicy()
                                     )
     print("Connecting...")
+    rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
     ssh.connect(hostname, username=user, pkey=rsa_key)
     print("Connected.")
     #
@@ -28,63 +27,45 @@ def install_mpi_ecosystem(hostname, user, rsa_key):
     print_stdout(stdout)
     print_stdout(stderr)
 
-    #
-    # Setup Python 3 ecosystem
-    #
-    install_list = [
-                    "build-essential",
-                    "nfs-common",
-                    "git",
-                    "python3",
-                    "python3-pip",
-                    "python3-numpy",
-                    "python3-scipy",
-                    "python3-matplotlib",
-                    "python3-dev",
-                    "python3-pandas",
-                    "python3-nose"
-                    ]
-    for i in install_list:
-        print(i)
-        stdin, stdout, stderr = ssh.exec_command("sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --yes --force-yes install {}".format(i))
-        print_stdout(stdout)
-        print_stdout(stderr)
-
-    #
-    # Setup MPICH2
-    #
-    install_list = [
-                    "mpich2"
-                    ]
-    for i in install_list:
+    for i in package_list:
         print(i)
         stdin, stdout, stderr = ssh.exec_command("sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --yes --force-yes install {}".format(i))
         print_stdout(stdout)
         print_stdout(stderr)
 
 
+def install_pip_packages(hostname, user, keyfile, package_list):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(
+                                    paramiko.AutoAddPolicy()
+                                    )
+    print("Connecting...")
+    rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
+    ssh.connect(hostname, username=user, pkey=rsa_key)
+    print("Connected.")
     #
     # Setup Python 3 ecosystem - Pip
     #
-    install_list = [
-                    "sympy",
-                    "mpi4py"
-                    ]
-    for i in install_list:
+    for i in package_list:
         print(i)
         stdin, stdout, stderr = ssh.exec_command("yes | sudo pip3 -q install {}".format(i))
         print_stdout(stdout)
         print_stdout(stderr)
 
 
+def install_github_packages(hostname, user, keyfile, package_list):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(
+                                    paramiko.AutoAddPolicy()
+                                    )
+    print("Connecting...")
+    rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
+    ssh.connect(hostname, username=user, pkey=rsa_key)
+    print("Connected.")
     #
-    # Additional stuff from Github - TODO
+    # Additional stuff from Github
     #
-    install_list = [
-                    "https://github.com/kitchenknif/PyTMM.git",
-                    "https://github.com/kitchenknif/PyATMM.git"
-                    ]
-    for i in install_list:
+    for i in package_list:
         print(i)
         stdin, stdout, stderr = ssh.exec_command("git clone {}".format(i))
         print_stdout(stdout)
@@ -191,36 +172,7 @@ def create_known_hosts_file(hostname, user, keyfile, hosts):
         print_stdout(stderr)
 
 
-def install_nfs(hostname, user, keyfile):
-    rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(
-                                    paramiko.AutoAddPolicy()
-                                    )
-    print("Connecting...")
-    ssh.connect(hostname, username=user, pkey=rsa_key)
-    print("Connected.")
-    print("Updating database...")
-    stdin, stdout, stderr = ssh.exec_command("sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update")
-    print_stdout(stdout)
-    print_stdout(stderr)
-    print("Upgrading software...")
-    stdin, stdout, stderr = ssh.exec_command("sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --yes --force-yes upgrade")
-    print_stdout(stdout)
-    print_stdout(stderr)
-
-    install_list = [
-                    "nfs-common",
-                    ]
-    install_string = ""
-    for i in install_list:
-        print(install_string)
-        stdin, stdout, stderr = ssh.exec_command("sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --yes --force-yes install {}".format(i))
-        print_stdout(stdout)
-        print_stdout(stderr)
-
-
-def pull_code_to_mpi_share(hostname, user, keyfile):
+def pull_code_to_mpi_share(hostname, user, keyfile, package_list):
     rsa_key = paramiko.RSAKey.from_private_key_file(keyfile)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(
@@ -232,10 +184,7 @@ def pull_code_to_mpi_share(hostname, user, keyfile):
     #
     # Pull stuff to share
     #
-    install_list = [
-                    "https://github.com/polyanskiy/refractiveindex.info-database.git",
-                    ]
-    for i in install_list:
+    for i in package_list:
         print(i)
         stdin, stdout, stderr = ssh.exec_command("cd /home/ubuntu/mpishare && git clone {}".format(i))
         print_stdout(stdout)
