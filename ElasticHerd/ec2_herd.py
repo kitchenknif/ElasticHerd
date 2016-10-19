@@ -6,7 +6,7 @@ import configparser
 import node_setup
 
 
-def kill_nodes(ami_id_file="elasticHerdAMI.txt"):
+def kill_nodes():
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
 

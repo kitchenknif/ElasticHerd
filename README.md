@@ -17,11 +17,11 @@ In the end you get a list of running nodes in an MPI cluster and a keyfile to ss
   - Creating nodes eats a lot of traffic, because each node is created from scratch
   
 ## TODO
-  - Create 1 node, save it as an AMI for all the other nodes => save traffic, faster deployment
+  - ~~Create 1 node, save it as an AMI for all the other nodes => save traffic, faster deployment~~
   - Create cluster on separate VPC
   - Add support for several clusters running at the same time
   - Clean up hard-coded time delays, figure out what causes kill_nodes() to crash
-  - Modular install lists (?)
+  - ~~Modular install lists (?)~~
   
 ## TODO - TaskMaster/Worker Class
   - ~~Email when all tasks finished~~
