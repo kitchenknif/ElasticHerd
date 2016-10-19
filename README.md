@@ -24,6 +24,6 @@ In the end you get a list of running nodes in an MPI cluster and a keyfile to ss
   - Modular install lists (?)
   
 ## TODO - TaskMaster/Worker Class
-  - Email when all tasks finished
+  - ~~Email when all tasks finished~~
   
   
