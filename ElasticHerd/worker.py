@@ -1,4 +1,6 @@
 import enum
+from smtplib import SMTP
+import datetime
 
 from mpi4py import MPI
 
@@ -36,12 +38,14 @@ class Worker:
 
 
 class TaskMaster:
-    def __init__(self, task_list):
+    def __init__(self, task_list, email_creds=None):
         self.comm = MPI.COMM_WORLD   # get MPI communicator object
         self.status = MPI.Status()   # get MPI status object
+        self.name = MPI.Get_processor_name()
         self.rank = self.comm.rank
         self.size = self.comm.size
         self.task_list = task_list
+        self.email_creds=email_creds
 
     def do_work(self):
         task_index = 0
@@ -67,3 +71,24 @@ class TaskMaster:
                 closed_workers += 1
 
         print("Master finishing")
+        if self.email_creds is not None:
+            debuglevel = 0
+
+            smtp = SMTP()
+            smtp.set_debuglevel(debuglevel)
+            smtp.connect(self.email_creds["smtp"], self.email_creds["port"])
+            smtp.starttls()
+            smtp.login(self.email_creds["login"], self.email_creds["password"])
+
+            from_addr = self.email_creds["from_address"]
+            to_addr = self.email_creds["to_address"]
+
+            subj = "Cluster Calculation Done"
+            date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+
+            message_text = "MPI TaskMaster on {} has finished all {} tasks.\n".format(self.name, len(self.task_list))
+
+            msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % (from_addr, to_addr, subj, date, message_text)
+
+            smtp.sendmail(from_addr, to_addr, msg)
+            smtp.quit()

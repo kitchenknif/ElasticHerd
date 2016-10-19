@@ -1,6 +1,7 @@
 import boto3
 import paramiko
 import time
+import configparser
 
 import node_setup
 
@@ -114,20 +115,10 @@ def kill_nodes():
                                         )
 
 
-def create_ec2_nodes(node_count=3, config="./elastic_config.cfg"):
-
-    keyfile = None
-    with open(config) as f:
-        lines = f.readlines()
-        for line in lines:
-            if len(line) > 1 and not line.startswith("#"):
-                key, value = line.split(":")
-                value = value.strip()
-                if "keyfile" in key:
-                    keyfile = value
-
-    if keyfile is None:
-        return
+def create_ec2_nodes(node_count=3, config_file="./elastic_config.cfg"):
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    keyfile = config['elasticherd']['keyfile']
 
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')

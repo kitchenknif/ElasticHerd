@@ -1,6 +1,6 @@
 # ElasticHerd Config file
 elastic_config.cfg
-
+elastic_email_config.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
