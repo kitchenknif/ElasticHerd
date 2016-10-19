@@ -14,7 +14,7 @@ In the end you get a list of running nodes in an MPI cluster and a keyfile to ss
   - kill_nodes() doesn't always manage to shutdown and delete everything in one run, crashes in some race condition.
   - All time delays are relatively randomly chosen (related to previous problem)
   - Cluster is created on the default VPC - probably not a good idea
-  - Creating nodes eats a lot of traffic, because each node is created from scratch
+  - ~~Creating nodes eats a lot of traffic, because each node is created from scratch~~
   
 ## TODO
   - ~~Create 1 node, save it as an AMI for all the other nodes => save traffic, faster deployment~~
